@@ -4,7 +4,7 @@ var getAllActors = () => {
 
 };
 
-var updateActor = () => {
+var updateActor = async () => {
 	//check if this actor exists
 	const foundActor = await findOne({ 'actor.id': requestBody.id });
 	if (foundActor) {
