@@ -4,7 +4,6 @@ const contentType = require('../middlewares/validations')
 const eraseEventControllers = require('../controllers/events');
 
 // Route related to delete events
-
 //To delete all events
 router.delete('/', contentType, async (req, res) => {
     try {
@@ -18,4 +17,5 @@ router.delete('/', contentType, async (req, res) => {
 
     }
 });
+
 module.exports = router;
