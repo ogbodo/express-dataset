@@ -1,46 +1,59 @@
-var DataStore = require('nedb-promise');
-const { FOUND_DUPLICATE } = require('../utils/constants');
-var eventsDB = new DataStore();
+const { insert, find, findOne, eraseAll } = require('../helpers/promisified_neDB')
 
 var getAllEvents = async () => {
 	try {
-		const allEvents = await eventsDB.find({});
+		const allEvents = await find();
 		//Sort events in ascending order
 		const sortedInAscendingOrder = allEvents.sort((firstEvent, secondEvent) => firstEvent.id - secondEvent.id);
-
-		return { status: true, data: sortedInAscendingOrder }
+		return { status: true, data: sortedInAscendingOrder };
 	} catch (error) {
 		console.log(error);
-		return { status: false, code: 500, message: error };
 	}
 };
 
 var addEvent = async (requestBody) => {
 	try {
-		//check if this event exists before now
-		const foundEvent = await eventsDB.findOne({ id: requestBody.id });
-		if (foundEvent) {
-			return { status: false, message: FOUND_DUPLICATE }
+		//check if this actor exists
+		const foundActor = await findOne({ id: requestBody.id });
+		if (foundActor) {
+			return { status: false };
 		}
-		//Add the new event object
-		await eventsDB.insert(requestBody);
+		await insert(requestBody);
 		return { status: true };
 
 	} catch (error) {
 		console.log(error);
-		return { status: false, code: 500, message: error };
-
 	}
 };
 
 
-var getByActor = (actorID) => {
+var getByActor = async (actorID) => {
+	try {
+		//check if this actor exists
+		console.log(actorID);
 
+		const foundActor = await find({ "actor.id": actorID });
+		console.log("foundActor", foundActor);
+		if (!foundActor) {
+			return { status: false };
+		}
+
+		const allEventsByActor = await find({ "actor.id": actorID });
+
+		//Sort actor's  events in ascending order by the event ID
+		const sortedInAscendingOrder = allEventsByActor
+			.filter(event => event.actor.id == actorID)
+			.sort((firstEvent, secondEvent) => firstEvent.id - secondEvent.id);
+		return { data: sortedInAscendingOrder };
+	} catch (error) {
+		console.log(error);
+	}
 };
 
 
-var eraseEvents = () => {
-
+var eraseEvents = async () => {
+	const deletedStatus = await eraseAll()
+	return deletedStatus;
 };
 
 module.exports = {

@@ -7,21 +7,43 @@ const eventControllers = require('../controllers/events');
 
 //To add new event
 router.post('/', contentType, async (req, res) => {
+    try {
+        const response = await eventControllers.addEvent(req.body);
+        const { status } = response;
+        if (status) {
+            res.json({ "status_code": 201, "body": {}, "headers": {} });
+        } else {
+            res.json({ "status_code": 400, "body": {}, "headers": {} });
+        }
+    } catch (error) {
+        console.log(error);
 
-    const response = await eventControllers.addEvent(req.body);
-    const { status } = response;
-    if (status) {
-        res.json({ "status_code": 201, "body": {}, "headers": {} });
-    } else {
-        res.json({ "status_code": 400, "body": {}, "headers": {} });
     }
-
 });
 
 //To get all events
 router.get('/', contentType, async (req, res) => {
-    const response = await eventControllers.getAllEvents();
-    const { data } = response;
-    res.json({ "status_code": 200, "body": data, "headers": {} });
+    try {
+        const response = await eventControllers.getAllEvents();
+        const { data } = response;
+        res.json({ "status_code": 200, "body": data, "headers": {} });
+    } catch (error) {
+        console.log(error);
+
+    }
+});
+
+//To delete all events
+router.delete('/erase', contentType, async (req, res) => {
+    try {
+        const response = await eventControllers.eraseEvents();
+        if (!response.status) {
+            throw response;
+        }
+        res.json({ "status_code": 200, "body": {}, "headers": {} });
+    } catch (error) {
+        console.log(error);
+
+    }
 });
 module.exports = router;
