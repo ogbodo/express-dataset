@@ -21,5 +21,13 @@ router.put('/', contentType, async (req, res) => {
     res.json({ "status_code": 200, "body": data, "headers": {} });
 });
 
+//Returning the actor records ordered by the total number of events
+router.get('/', contentType, async (req, res) => {
+
+    const response = await actorControllers.getAllActors();
+    const { data } = response;
+
+    res.json({ "status_code": 200, "body": data });
+});
 
 module.exports = router;

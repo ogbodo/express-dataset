@@ -30,10 +30,7 @@ var addEvent = async (requestBody) => {
 var getByActor = async (actorID) => {
 	try {
 		//check if this actor exists
-		console.log(actorID);
-
 		const foundActor = await find({ "actor.id": actorID });
-		console.log("foundActor", foundActor);
 		if (!foundActor) {
 			return { status: false };
 		}
