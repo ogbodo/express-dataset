@@ -26,7 +26,14 @@ router.get('/', contentType, async (req, res) => {
 
     const response = await actorControllers.getAllActors();
     const { data } = response;
+    res.json({ "status_code": 200, "body": data });
+});
 
+//RReturning the actor records ordered by the maximum streak
+router.get('/streak', contentType, async (req, res) => {
+
+    const response = await actorControllers.getStreak();
+    const { data } = response;
     res.json({ "status_code": 200, "body": data });
 });
 
