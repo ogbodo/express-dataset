@@ -6,9 +6,13 @@ const actorControllers = require('../controllers/actors');
 // Routes related to actor.
 
 //Updating the avatar URL of the actor
-router.put('/actors', contentType, async (req, res) => {
-    const { id, login, avatar_url } = req.body;
-    const response = await actorControllers(actorID);
+router.put('/', contentType, async (req, res) => {
+    const { id, avatar_url } = req.body;
+    if (!avatar_url) {
+        res.json({ "status_code": 400, "body": {}, "headers": {} });
+        return;
+    }
+    const response = await actorControllers.updateActor(id, avatar_url);
     const { data, status } = response;
     if (!status) {
         res.json({ "status_code": 404, "body": {}, "headers": {} });
