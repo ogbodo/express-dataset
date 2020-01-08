@@ -1,8 +1,11 @@
 var express = require('express');
 var router = express.Router();
 const contentType = require('../middlewares/validations');
-const eventControllers = require('../controllers/events')
+const eventControllers = require('../controllers/events');
+
 // Routes related to event
+
+//To add new event
 router.post('/', contentType, async (req, res) => {
 
     const response = await eventControllers.addEvent(req.body);
@@ -14,6 +17,8 @@ router.post('/', contentType, async (req, res) => {
     }
 
 });
+
+//To get all events
 router.get('/', contentType, async (req, res) => {
     const response = await eventControllers.getAllEvents();
     const { data } = response;

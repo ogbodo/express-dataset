@@ -1,6 +1,6 @@
-var Datastore = require('nedb-promise');
+var DataStore = require('nedb-promise');
 const { FOUND_DUPLICATE } = require('../utils/constants');
-var eventsDB = new Datastore();
+var eventsDB = new DataStore();
 
 var getAllEvents = async () => {
 	try {
@@ -34,7 +34,7 @@ var addEvent = async (requestBody) => {
 };
 
 
-var getByActor = () => {
+var getByActor = (actorID) => {
 
 };
 
