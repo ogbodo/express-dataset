@@ -58,4 +58,18 @@ const eraseAll = () => {
     });
 }
 
-module.exports = { insert, find, findOne, eraseAll }
+const update = (query, updateQuery) => {
+
+    return new Promise((resolve, reject) => {
+        DB.update(query, updateQuery, (err, doc) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve({ status: true });
+            }
+        });
+    });
+}
+
+module.exports = { insert, find, findOne, eraseAll, update };
