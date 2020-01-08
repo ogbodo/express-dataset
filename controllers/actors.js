@@ -27,42 +27,7 @@ var getAllActors = async () => {
 
 		const sortedArrayOfObjects = objectKeys.map(key => {
 			return { key, ...actorsNumberOfEventStat[key] }
-		}).sort((first, second) => {
-			if (second.counter - first.counter >= 0) {
-				if (second.counter - first.counter > 0) {
-					//sort in descending order
-					return 1;
-				} else {
-					// they must be equal
-					/**then order them by the timestamp of the latest event in the descending order */
-					const firstDate = new Date(first.createdAt);
-					const secondDate = new Date(second.createdAt);
-					if (secondDate.getTime() >= firstDate.getTime()) {
-						if (secondDate.getTime() > firstDate.getTime()) {
-							//sort in descending order
-							return 1;
-						}
-						else {
-							// they must be equal
-							/** order them by the alphabetical order of login. */
-							var firstLogin = first.login.toUpperCase(); // ignore upper and lowercase
-							var secondLogin = second.login.toUpperCase(); // ignore upper and lowercase
-							if (secondLogin > firstLogin) {
-								return 1;
-							}
-							if (secondLogin < firstLogin) {
-								return -1;
-							}
-							return 0;//they must be equal.
-
-						}
-
-					}
-				}
-
-			}
-		});
-		console.log("sortedArrayOfObjects", sortedArrayOfObjects);
+		}).sort((first, second) => sortItems(first, second));
 
 		return { status: true, data: sortedArrayOfObjects.map(data => { return { id: data.key, login: data.login, avatar_url: data.avatarUrl } }) };
 	} catch (error) {
@@ -92,6 +57,38 @@ var getStreak = () => {
 
 };
 
+function sortItems(first, second) {
+	if (second.counter - first.counter >= 0) {
+		if (second.counter - first.counter > 0) {
+			//sort in descending order
+			return 1;
+		} else {
+			// they must be equal
+			/**then order them by the timestamp of the latest event in the descending order */
+			const firstDate = new Date(first.createdAt);
+			const secondDate = new Date(second.createdAt);
+			if (secondDate.getTime() >= firstDate.getTime()) {
+				if (secondDate.getTime() > firstDate.getTime()) {
+					//sort in descending order
+					return 1;
+				}
+				else {
+					// they must be equal
+					/** order them by the alphabetical order of login. */
+					var firstLogin = first.login.toUpperCase(); // ignore upper and lowercase
+					var secondLogin = second.login.toUpperCase(); // ignore upper and lowercase
+					if (secondLogin > firstLogin) {
+						return 1;
+					}
+					return 0;//they must be equal.
+
+				}
+
+			}
+		}
+
+	}
+}
 
 module.exports = {
 	updateActor: updateActor,
