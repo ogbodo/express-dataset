@@ -1,0 +1,3 @@
+const FOUND_DUPLICATE = 'FOUND DUPLICATE'
+
+module.exports = { FOUND_DUPLICATE }
