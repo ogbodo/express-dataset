@@ -32,18 +32,4 @@ router.get('/', contentType, async (req, res) => {
 
     }
 });
-
-//To delete all events
-router.delete('/erase', contentType, async (req, res) => {
-    try {
-        const response = await eventControllers.eraseEvents();
-        if (!response.status) {
-            throw response;
-        }
-        res.json({ "status_code": 200, "body": {}, "headers": {} });
-    } catch (error) {
-        console.log(error);
-
-    }
-});
 module.exports = router;
