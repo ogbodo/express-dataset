@@ -14,4 +14,9 @@ router.post('/', contentType, async (req, res) => {
     }
 
 });
+router.get('/', contentType, async (req, res) => {
+    const response = await eventControllers.getAllEvents();
+    const { data } = response;
+    res.json({ "status_code": 200, "body": data, "headers": {} });
+});
 module.exports = router;

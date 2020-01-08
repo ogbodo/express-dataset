@@ -2,8 +2,17 @@ var Datastore = require('nedb-promise');
 const { FOUND_DUPLICATE } = require('../utils/constants');
 var eventsDB = new Datastore();
 
-var getAllEvents = () => {
+var getAllEvents = async () => {
+	try {
+		const allEvents = await eventsDB.find({});
+		//Sort events in ascending order
+		const sortedInAscendingOrder = allEvents.sort((firstEvent, secondEvent) => firstEvent.id - secondEvent.id);
 
+		return { status: true, data: sortedInAscendingOrder }
+	} catch (error) {
+		console.log(error);
+		return { status: false, code: 500, message: error };
+	}
 };
 
 var addEvent = async (requestBody) => {
