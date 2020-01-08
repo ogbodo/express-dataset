@@ -21,6 +21,18 @@ router.post('/', contentType, async (req, res) => {
     }
 });
 
+//Returning the event records filtered by the actor ID
+router.get('/actors/:actorID', contentType, async (req, res) => {
+    const { actorID } = req.params;
+    const response = await eventControllers.getByActor(actorID);
+    const { data, status } = response;
+    if (!status) {
+        res.json({ "status_code": 404, "body": {}, "headers": {} });
+        return;
+    }
+    res.json({ "status_code": 200, "body": data, "headers": {} });
+});
+
 //To get all events
 router.get('/', contentType, async (req, res) => {
     try {
