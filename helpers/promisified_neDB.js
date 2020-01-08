@@ -47,7 +47,7 @@ const findOne = (query) => {
 const eraseAll = () => {
 
     return new Promise((resolve, reject) => {
-        DB.remove({}, (err, doc) => {
+        DB.remove({}, { multi: true }, (err, doc) => {
             if (err) {
                 reject(err);
             }
