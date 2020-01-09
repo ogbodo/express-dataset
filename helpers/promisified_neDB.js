@@ -30,7 +30,6 @@ const find = (query = {}) => {
 }
 
 const findOne = (query) => {
-    console.log('query', query);
 
     return new Promise((resolve, reject) => {
         DB.findOne(query, (err, doc) => {

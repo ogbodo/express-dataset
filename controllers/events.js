@@ -27,21 +27,22 @@ var addEvent = async (requestBody) => {
 };
 
 
-var getByActor = async (actorID) => {
+var getByActor = async (id) => {
+	const actorId = Number.parseInt(id);
 	try {
 		//check if this actor exists
-		const foundActor = await find({ "actor.id": actorID });
+		const foundActor = await findOne({ 'actor.id': actorId });
 		if (!foundActor) {
 			return { status: false };
 		}
 
-		const allEventsByActor = await find({ "actor.id": actorID });
+		const allEventsByActor = await find({ "actor.id": actorId });
 
 		//Sort actor's  events in ascending order by the event ID
 		const sortedInAscendingOrder = allEventsByActor
-			.filter(event => event.actor.id == actorID)
 			.sort((firstEvent, secondEvent) => firstEvent.id - secondEvent.id);
-		return { data: sortedInAscendingOrder };
+
+		return { data: sortedInAscendingOrder, status: true };
 	} catch (error) {
 		console.log(error);
 	}
