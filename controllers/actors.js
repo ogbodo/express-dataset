@@ -70,16 +70,23 @@ var getStreak = async () => {
 				actorsTotalConsecutiveDaysStat[event.actor.id].pushedDates.push(event.created_at);
 			}
 		});
+
 		//next will be to try and order the dates in descending order
 		const objectKeys = Object.keys(actorsTotalConsecutiveDaysStat);
 		const arrayOfActorObjects = objectKeys.map(key => {
 			const actorObject = { key, ...actorsTotalConsecutiveDaysStat[key] };
-			const sortedDates = _.sortBy(actorObject.pushedDates, (pushedDate) => moment(pushedDate), ['desc'])
+			console.log("Before Sort", actorObject.pushedDates);
+
+
+			const sortedDates = actorObject.pushedDates.sort((a, b) => new moment(a.date).format('YYYYMMDD hh:mm:ss') - new moment(b.date).format('YYYYMMDD hh:mm:ss'))
+
+			console.log("After Sort", sortedDates);
 			//Determine the consecutive days actors pushed events from the sorted dates above.
 			actorObject.totalConsecutiveDays = calculateConsecutiveDays(sortedDates);
+			console.log("actorObject", actorObject);
+
 			return actorObject
 		});
-		console.log("arrayOfActorObjects", arrayOfActorObjects);
 
 		//sort actors by total number of consecutive days pushed events
 		const actorByConsecutiveDays = arrayOfActorObjects.sort((actor1, actor2) => {
@@ -132,7 +139,7 @@ function calculateConsecutiveDays(sortedDates) {
 		if (sortedDates[index + 1]) {
 			const first = moment(sortedDates[index]);
 			const second = moment(sortedDates[index + 1]);
-			const duration = moment.duration(first.diff(second));
+			const duration = moment.duration(second.diff(first));
 			const days = Math.round(duration.asDays());
 			console.log("days", days);
 			if (days === 1) {

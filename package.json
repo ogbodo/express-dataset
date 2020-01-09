@@ -9,6 +9,7 @@
     "test": "./node_modules/.bin/mocha test"
   },
   "dependencies": {
+    "bluebird": "^3.7.2",
     "body-parser": "~1.17.1",
     "chai": "^4.1.1",
     "chai-as-promised": "^7.1.1",

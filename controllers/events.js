@@ -18,7 +18,7 @@ var addEvent = async (requestBody) => {
 		if (foundActor) {
 			return { status: false };
 		}
-		await insert(requestBody);
+		await insert({ ...requestBody });
 		return { status: true };
 
 	} catch (error) {
