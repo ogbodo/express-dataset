@@ -1,6 +1,5 @@
 const { update, findOne, find } = require('../helpers/promisified_neDB');
 const moment = require('moment');
-const _ = require('lodash');
 
 
 var getAllActors = async () => {
@@ -24,15 +23,10 @@ var getAllActors = async () => {
 		const sortedArrayOfObjects = objectKeys.map(key => {
 			return { key, ...actorsNumberOfEventStat[key] }
 		}).sort((first, second) => {
-			if (second.counter - first.counter >= 0) {
-				if (second.counter - first.counter > 0) {
-					//sort in descending order
-					return 1;
-				} else {
-					// they must be equal
-					return doFurtherSorting(first, second)
-				}
-
+			if (second.counter - first.counter === 0) {
+				return doFurtherSorting(first, second)
+			} else {
+				return second.counter - first.counter > 0;
 			}
 		});
 		return { status: true, data: sortedArrayOfObjects.map(data => { return { id: data.key, login: data.login, avatar_url: data.avatarUrl } }) };
@@ -70,35 +64,22 @@ var getStreak = async () => {
 				actorsTotalConsecutiveDaysStat[event.actor.id].pushedDates.push(event.created_at);
 			}
 		});
-
 		//next will be to try and order the dates in descending order
 		const objectKeys = Object.keys(actorsTotalConsecutiveDaysStat);
 		const arrayOfActorObjects = objectKeys.map(key => {
 			const actorObject = { key, ...actorsTotalConsecutiveDaysStat[key] };
-			console.log("Before Sort", actorObject.pushedDates);
-
-
-			const sortedDates = actorObject.pushedDates.sort((a, b) => new moment(a.date).format('YYYYMMDD hh:mm:ss') - new moment(b.date).format('YYYYMMDD hh:mm:ss'))
-
-			console.log("After Sort", sortedDates);
+			const sortedDates = actorObject.pushedDates.sort((a, b) => moment(a).diff(moment(b)) > 0);
 			//Determine the consecutive days actors pushed events from the sorted dates above.
 			actorObject.totalConsecutiveDays = calculateConsecutiveDays(sortedDates);
-			console.log("actorObject", actorObject);
-
 			return actorObject
 		});
-
 		//sort actors by total number of consecutive days pushed events
 		const actorByConsecutiveDays = arrayOfActorObjects.sort((actor1, actor2) => {
-			if (actor1.totalConsecutiveDays - actor2.totalConsecutiveDays >= 0) {
-				if (actor1.totalConsecutiveDays - actor2.totalConsecutiveDays > 0) {
-					//sort in descending order
-					return 1;
-				} else {
-					// they must be equal
-					return doFurtherSorting(actor1, actor2);
-				}
-
+			if (actor2.totalConsecutiveDays - actor1.totalConsecutiveDays === 0) {
+				// they must be equal
+				return doFurtherSorting(actor1, actor2);
+			} else {
+				return actor2.totalConsecutiveDays - actor1.totalConsecutiveDays > 0;
 			}
 		});
 
@@ -112,21 +93,13 @@ function doFurtherSorting(first, second) {
 	/**then order them by the timestamp of the latest event in the descending order */
 	const firstDate = new Date(first.createdAt);
 	const secondDate = new Date(second.createdAt);
-	if (secondDate.getTime() >= firstDate.getTime()) {
-		if (secondDate.getTime() > firstDate.getTime()) {
-			//sort in descending order
-			return 1;
-		}
-		else {
-			// they must be equal
-			/** order them by the alphabetical order of login. */
-			var firstLogin = first.login.toUpperCase(); // ignore upper and lowercase
-			var secondLogin = second.login.toUpperCase(); // ignore upper and lowercase
-			if (secondLogin > firstLogin) {
-				return 1;
-			}
-			return 0;//they must be equal.
-		}
+	if (secondDate.getTime() === firstDate.getTime()) {
+		/** order them by the alphabetical order of login. */
+		var firstLogin = first.login.toUpperCase(); // ignore upper and lowercase
+		var secondLogin = second.login.toUpperCase(); // ignore upper and lowercase
+		return firstLogin > secondLogin === true;
+	} else {
+		return secondDate.getTime() > firstDate.getTime() > 0
 	}
 }
 
@@ -141,10 +114,10 @@ function calculateConsecutiveDays(sortedDates) {
 			const second = moment(sortedDates[index + 1]);
 			const duration = moment.duration(second.diff(first));
 			const days = Math.round(duration.asDays());
-			console.log("days", days);
 			if (days === 1) {
-				counter++;
-			} else {
+				++counter;
+			}
+			else {
 				mappedDaysCount.push(counter > 1 ? counter : 0);
 				counter = 1;
 			}
@@ -152,6 +125,7 @@ function calculateConsecutiveDays(sortedDates) {
 		}
 
 	}
+	mappedDaysCount.push(counter > 1 ? counter : 0);
 	//sum the total consecutive days for this actor
 	return mappedDaysCount.reduce((runningTotal, currentValue) => {
 		return runningTotal += currentValue;
