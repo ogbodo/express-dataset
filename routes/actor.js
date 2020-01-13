@@ -33,7 +33,7 @@ router.get('/streak', async (req, res) => {
 
     const response = await actorControllers.getStreak();
     const { data } = response;
-    res.json({ "status_code": 200, "body": data });
+    res.status(200).json(data);
 });
 
 module.exports = router;

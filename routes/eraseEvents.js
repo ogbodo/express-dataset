@@ -10,7 +10,8 @@ router.delete('/', async (req, res) => {
         if (!response.status) {
             throw response;
         }
-        res.json({ "status_code": 200, "body": {}, "headers": {} });
+        res.status(200).json({});
+
     } catch (error) {
         console.log(error);
 
